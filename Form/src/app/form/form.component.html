@@ -36,9 +36,12 @@
 
     <div class="card">
       <h2>Ваши навыки</h2>
-      <button class="btn" type="button">Добавить умение</button>
-      <div class="form-control">
-        <label></label>
+      <button class="btn" type="button" (click)="addSkills()">Добавить умение</button>
+      <div
+        class="form-control"
+        *ngFor="let control of skillsForm.controls; let idx = index"
+      >
+        <label>Умение {{idx + 1}} </label>
         <input type="text">
       </div>
     </div>

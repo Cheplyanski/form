@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { bufferTime, debounceTime, delay, throttleTime } from 'rxjs/operators';
-import { interval } from 'rxjs';
+import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-form',
@@ -11,6 +11,7 @@ import { interval } from 'rxjs';
 export class FormComponent implements OnInit {
 
   form: FormGroup;
+  skillsForm : FormArray;
 
   constructor() {
 
@@ -25,17 +26,16 @@ export class FormComponent implements OnInit {
       password: new FormControl(null, [
         Validators.required,
         Validators.minLength(6)
-      ])
+      ]),
+      skills: new FormArray([])
     });
-    /*
-    this.form.get('email').valueChanges.pipe(debounceTime(1000)).subscribe(val => {
-      console.log ("email= " + val)
-    })
-     */
+    this.skillsForm = this.form.get('skills') as FormArray;
 
-    this.form.valueChanges.pipe(debounceTime(1000)).subscribe(val => {
-      console.log(val)
-    })
+    this.form.valueChanges.pipe(
+      debounceTime(3000),
+      distinctUntilChanged((pre,cur) =>
+       pre.email == cur.email))
+        .subscribe(val => console.log(val))
   }
 
   submit() {
@@ -47,4 +47,8 @@ export class FormComponent implements OnInit {
     }
   }
 
+  addSkills(){
+    const control = new FormControl('', Validators.required);
+    (this.form.get('skills') as FormArray).push(control);
+  }
 }
